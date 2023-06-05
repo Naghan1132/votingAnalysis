@@ -1,6 +1,6 @@
 library(stats)
 
-load("~/fac/m1/s2/stage/packages/experiments/votingExperiments/dissimilarity_matrix.RData")
+load("dissimilarity_matrix.RData")
 View(dissimilarity_matrix)
 
 m_dist <- as.dist(dissimilarity_matrix)
@@ -14,6 +14,8 @@ plot(cah)
 
 
 # ==== MDS 2D ====
+library(ggplot2)
+library(plotly)
 
 # Calcul de la MDS
 mds <- cmdscale(dissimilarity_matrix, k = 2)
@@ -21,11 +23,24 @@ mds <- cmdscale(dissimilarity_matrix, k = 2)
 coord_x <- mds[, 1]
 coord_y <- mds[, 2]
 # Affichage des points en 2D
-plot(coord_x, coord_y, type = "n", xlab = "Coordonnée X", ylab = "Coordonnée Y", main = "MDS")
-# Ajout des points avec des étiquettes
-points(coord_x, coord_y, pch = 16, col = "blue")
-text(coord_x, coord_y, labels = rownames(dissimilarity_matrix), pos = 4)
+# plot(coord_x, coord_y, type = "n", xlab = "Coordonnée X", ylab = "Coordonnée Y", main = "MDS")
+# # Ajout des points avec des étiquettes
+# points(coord_x, coord_y, pch = 16, col = "blue")
+# text(coord_x, coord_y, labels = rownames(dissimilarity_matrix), pos = 4)
+df <- data.frame(x = coord_x, y = coord_y, labels = rownames(dissimilarity_matrix))
+p <- ggplot(df, aes(x, y, label = labels)) + geom_point(color = "blue", size = 3) +
+  geom_text(aes(label = labels), hjust = 0.5,vjust = -0.5)
+p <- ggplotly(p)
+print(p)
 
+# Convertir toutes les colonnes en type numérique
+df <- data.frame(x = coord_x, y = coord_y)
+# ==== Clustering avec K-means ====
+kmeans_result <- kmeans(df, centers = 3)
+# Obtention des attributions de cluster
+cluster_labels <- kmeans_result$cluster
+# Affichage des résultats
+plot(df, col = cluster_labels, pch = 16)
 
 #  ==== MDS 3D ====
 library(rgl)

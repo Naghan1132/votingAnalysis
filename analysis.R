@@ -120,10 +120,4 @@ plot(resultat_cah, main = "Dendrogramme CAH")
 View(t(df))
 View(df)
 
-# === MDS ===
-
-resultat_mds <- cmdscale(dist(t(df)))
-plot(resultat_mds, type = "n", xlab = "Dimension 1", ylab = "Dimension 2", main = "Analyse MDS")
-text(resultat_mds, labels = rownames(df))
-
 
