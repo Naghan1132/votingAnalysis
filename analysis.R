@@ -14,7 +14,6 @@
 # pour les candidats dans tout le dataframe, ça fausse tout, il faudrait faire ligne par ligne l'analyse
 
 
-
 # === Loading data ===
 library("readxl")
 df <- read_excel("experiments.xlsx")
