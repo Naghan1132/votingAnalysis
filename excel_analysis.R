@@ -3,8 +3,6 @@
 # CAH
 # MDS
 
-# ====
-
 # clustering entre les méthodes (en excluant les autres colonnes)
 # ACM sur toute les variables ?
 # mettre en facteur les resultats de méthodes ????
@@ -50,11 +48,6 @@ summary(df)
 library(FactoMineR)
 
 # === ACM ===
-
-# echantillon <- df[sample(nrow(df), 100), ]
-# res.mca <- MCA(echantillon)
-# couleurs <- c("red", "blue", "green")[as.numeric(factor(df$typeSimu))]
-# plot(res.mca,col.ind = couleurs, habillage = "typeSimu", title = "Nuage d'individus (Échantillon)")
 
 res.mca <- MCA(df)
 eig.val <- res.mca$eig # nuage individus
