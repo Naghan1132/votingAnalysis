@@ -94,30 +94,3 @@ ggplot(data = as.data.frame(similarity_matrix)) +
   labs(x = "nanson", y = "minimax", title = "Graphique de proximité") +
   theme_minimal()
 
-# === CAH ===
-#res.hcpc = HCPC(res.mca)
-
-df$nVoters = NULL
-df$nCandidates = NULL
-df$typeSimu = NULL
-
-df$uninominal1T = as.numeric(factor(df$uninominal1T))
-df$uninominal2T = as.numeric(factor(df$uninominal2T))
-df$successif_elimination = as.numeric(factor(df$successif_elimination))
-df$bucklin = as.numeric(factor(df$bucklin))
-df$borda = as.numeric(factor(df$borda))
-df$nanson = as.numeric(factor(df$nanson))
-df$minimax = as.numeric(factor(df$minimax))
-df$copeland = as.numeric(factor(df$copeland))
-df$condorcet = as.numeric(factor(df$condorcet))
-df$range_voting = as.numeric(factor(df$range_voting))
-df$approval = as.numeric(factor(df$approval))
-df$majority_jugement = as.numeric(factor(df$majority_jugement))
-
-resultat_cah <- hclust(dist(t(df)))
-# Visualiser le dendrogramme résultant
-plot(resultat_cah, main = "Dendrogramme CAH")
-View(t(df))
-View(df)
-
-
