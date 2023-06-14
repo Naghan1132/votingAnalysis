@@ -1,3 +1,7 @@
+library(ggplot2)
+library(plotly)
+library(gridExtra)
+
 # ==== Évolution dissimilarité entre types de distribution ====
 
 load("experiments_output_data/distribution_fixed/dissimilarity_matrix_beta_30_simus.RData")
@@ -61,6 +65,9 @@ for (i in 1:(length(candidates) - 1)) {
     n_candidates_evolution_matrix[j, i] <- similarity
   }
 }
+
+# Diviser la fenêtre graphique en deux sous-graphiques côte à côte
+par(mfrow = c(1, 2))
 
 mds <- cmdscale(n_candidates_evolution_matrix, k = 2)
 print(mds)
