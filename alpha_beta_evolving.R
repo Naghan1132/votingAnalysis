@@ -4,8 +4,10 @@
 
 # Modifier popularité d'un candidat
 
-library(voteSim)
-library(stats)
+
+library(ggplot2)
+library(plotly)
+library(gridExtra)
 
 #define range
 p = seq(0,1, length=100)
@@ -25,36 +27,37 @@ print(mean(echantillon2)) # => 0.52
 
 load("experiments_output_data/beta_unif/0.2_alpha_0.1_beta_10_simus.RData")
 matrix_0.2_alpha_0.1_beta <- dissimilarity_matrix
-load("experiments_output_data/beta_unif/0.6_alpha_1.5_beta_10_simus.RData")
-matrix_0.6_alpha_1.5_beta <- dissimilarity_matrix
-load("experiments_output_data/beta_unif/1_alpha_10_beta_10_simus.RData")
-matrix_1_alpha_10_beta_10_simus <- dissimilarity_matrix
-load("experiments_output_data/beta_unif/5_alpha_0.9_beta_10_simus.RData")
-matrix_5_alpha_0.9_beta_10_simus <- dissimilarity_matrix
+load("experiments_output_data/beta_unif/0.2_alpha_0.3_beta_10_simus.RData")
+matrix_0.2_alpha_0.3_beta <- dissimilarity_matrix
+load("experiments_output_data/beta_unif/0.6_alpha_0.1_beta_10_simus.RData")
+matrix_0.6_alpha_0.1_beta <- dissimilarity_matrix
+load("experiments_output_data/beta_unif/0.6_alpha_0.3_beta_10_simus.RData")
+matrix_0.6_alpha_0.3_beta <- dissimilarity_matrix
 
 
 
 # ==== MDS ====
 
-alpha <- c("0.2","0.6","1","5")
-beta <- c("0.1","1.5","10","0.9")
+alpha <- c("0.2_alpha","0.6_alpha")
+beta <- c("0.1_beta","0.3_beta")
 couples <- expand.grid(alpha = alpha, beta = beta)
 print(couples)
-for (c in couples) {
-  print(c)
-}
+chaine_couples <- paste(couples$alpha, couples$beta, sep = "_")
+# Affichage de la chaîne de caractères
+print(chaine_couples)
+
 
 #créer tous les couple de alpha/beta => les col et les row auront les noms de tout les couples
 
-evolution_matrix <- matrix(0,length(alpha),length(beta))
-colnames(evolution_matrix) <- alpha
-rownames(evolution_matrix) <- beta
+evolution_matrix <- matrix(0,length(chaine_couples),length(chaine_couples))
+colnames(evolution_matrix) <- chaine_couples
+rownames(evolution_matrix) <- chaine_couples
 View(evolution_matrix)
 
-for (i in 1:(length(alpha) - 1)) {
-  for (j in (i + 1):length(beta)) {
+for (i in 1:(length(chaine_couples) - 1)) {
+  for (j in (i + 1):length(chaine_couples)) {
     # fonction distance
-    similarity <- sqrt(sum((as.vector(get(paste0("matrix_", alpha[i]))) - as.vector(get(paste0("matrix_", beta[j]))))^2))
+    similarity <- sqrt(sum((as.vector(get(paste0("matrix_", chaine_couples[i]))) - as.vector(get(paste0("matrix_", chaine_couples[j]))))^2))
     evolution_matrix[i, j] <- similarity
     evolution_matrix[j, i] <- similarity
   }
