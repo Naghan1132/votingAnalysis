@@ -67,7 +67,7 @@ for (i in 1:(length(candidates) - 1)) {
 }
 
 # Diviser la fenêtre graphique en deux sous-graphiques côte à côte
-par(mfrow = c(1, 2))
+#par(mfrow = c(1, 2))
 
 mds <- cmdscale(n_candidates_evolution_matrix, k = 2)
 print(mds)
