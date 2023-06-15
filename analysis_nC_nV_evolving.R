@@ -29,7 +29,7 @@ for (num_v in num_voters) {
   }
 }
 
-# ==== MDS ====
+# ==== Calculate All MDS ====
 
 # Créer une liste pour stocker les résultats de MDS
 mds_list <- list()
@@ -42,7 +42,7 @@ for (num_c in num_candidates) {
   }
 }
 
-# ==== PLOTS ====
+# ==== Generate All PLOTS ====
 
 plot_list <- list()
 for (num_v in num_voters) {

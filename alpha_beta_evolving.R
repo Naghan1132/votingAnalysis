@@ -4,7 +4,6 @@
 
 # Modifier popularité d'un candidat
 
-
 library(ggplot2)
 library(plotly)
 library(gridExtra)
