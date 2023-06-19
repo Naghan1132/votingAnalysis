@@ -9,15 +9,15 @@ library(plotly)
 library(gridExtra)
 
 # ==== LOADING DATA FROM EXPERIMENTS votingExperiments::evolving_alpha_beta() ====
+alpha <- c(0.5,0.6,0.7,0.8,0.9,1)
+beta <- c(0.5,0.6,0.7,0.8,0.9,1)
 
-alpha <- c(0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1)
-beta <- c(0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1)
 
 matrix_list <- list()
 for (a in alpha) {
   for (b in beta) {
     # Loading files
-    file_path <- paste0("experiments_output_data/alpha_beta_evolving/",a, "_alpha_",b, "_beta_500_simus.RData")
+    file_path <- paste0("experiments_output_data/alpha_beta_evolving/",a, "_alpha_",b, "_beta_50_simus.RData")
     load(file_path)
     matrix_name <- paste0("matrix_", a, "_alpha_", b, "_beta")
     matrix_list[[matrix_name]] <- dissimilarity_matrix
@@ -35,18 +35,16 @@ for (a in alpha) {
 # ==== Construire les couples alpha/beta pour analyse ====
 couples <- expand.grid(alpha = alpha, beta = beta)
 chaine_couples <- paste(couples$alpha, couples$beta, sep = "_")
-prefix <- "alpha"
-suffix <- "beta"
+
 for (i in 1:length(chaine_couples)) {
   values <- strsplit(chaine_couples[i],"_")
-  chaine_couples[i] <- paste0(values[[1]][1],"_",prefix,"_",values[[1]][2],"_", suffix)
+  chaine_couples[i] <- paste0(values[[1]][1],"_alpha_",values[[1]][2],"_beta")
 }
 
 # ==== Matrice d'évolution ====
 evolution_matrix <- matrix(0,length(chaine_couples),length(chaine_couples))
 colnames(evolution_matrix) <- chaine_couples
 rownames(evolution_matrix) <- chaine_couples
-View(evolution_matrix)
 
 # ==== Distance ====
 for (i in 1:(length(chaine_couples) - 1)) {
