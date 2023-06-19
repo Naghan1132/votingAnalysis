@@ -122,7 +122,7 @@ p <- ggplotly(p)
 print(p)
 
 
-# ==== More Analysis (line by line) ====
+# ==== Analysis (line by line) ====
 
 # faire distance sur chaque ligne, puis faire MDS sur toutes ces matrices de distances
 # Pour chaque ligne : calculer les distances entre matrices de dissimilarirtés à n_votants fixés
@@ -171,5 +171,49 @@ p <- ggplot(df, aes(x, y, label = labels)) + geom_point(color = "blue", size = 3
 p <- ggplotly(p)
 print(p)
 
+
+# ==== Analysis (column by column) ====
+
+
+# == Addionner les matrices de dissimilarité de chaque colonnes entres elles ==
+methods_names <- c("uninominal1T","uninominal2T","successif_elimination","bucklin","borda","nanson","minimax","copeland","condorcet","range_voting","approval","JM","infinity","star","anti_plularity")
+for(c in num_candidates){
+  var_name <- paste0("matrix_",c,"_candidates")
+  col_matrix <- matrix(0, length(methods_names),length(methods_names))
+  colnames(col_matrix) <- methods_names
+  rownames(col_matrix) <- methods_names
+  for (v in num_voters) {
+    m1 <-  paste0("matrix_",v,"_voters_",c,"_candidates")
+    col_matrix <- col_matrix + get(m1)
+  }
+  assign(var_name, col_matrix)
+}
+
+
+# == Puis faire la distances entres toutes les colonnes ==
+
+columns_candidates <- c("3_candidates","4_candidates","5_candidates","7_candidates","9_candidates","14_candidates")
+
+evolution_matrix <- matrix(0,length(columns_candidates),length(columns_candidates))
+colnames(evolution_matrix) <- columns_candidates
+rownames(evolution_matrix) <- columns_candidates
+
+for (i in 1:(length(columns_candidates) - 1)) {
+  for (j in (i + 1):length(columns_candidates)) {
+    similarity <- sqrt(sum((as.vector(get(paste0("matrix_",columns_candidates[i]))) - as.vector(get(paste0("matrix_", columns_candidates[j]))))^2))
+    evolution_matrix[i, j] <- similarity
+    evolution_matrix[j, i] <- similarity
+  }
+}
+
+mds <- cmdscale(evolution_matrix, k = 2)
+coord_x <- mds[, 1]
+coord_y <- mds[, 2]
+df <- data.frame(x = coord_x, y = coord_y, labels = rownames(evolution_matrix))
+p <- ggplot(df, aes(x, y, label = labels)) + geom_point(color = "blue", size = 3) +
+  geom_text(aes(label = labels), hjust = 0.5,vjust = -0.5) +
+  geom_path(color = "red", alpha = 0.5, size = 0.5, linetype = "dashed")
+p <- ggplotly(p)
+print(p)
 
 
