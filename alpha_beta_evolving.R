@@ -2,7 +2,7 @@
 # (faire varier param alpha et beta)
 # et voir si le résultats des méthodes donnent toujours le même résultat
 
-# Modifier popularité d'un candidat
+# Modifier la popularité d'un candidat
 
 library(ggplot2)
 library(plotly)
@@ -31,6 +31,48 @@ for (a in alpha) {
     assign(var_name, matrix_list[[var_name]])
   }
 }
+
+# ==== Calculate All MDS ====
+
+# Créer une liste pour stocker les résultats de MDS
+mds_list <- list()
+for (a in alpha) {
+  for (b in beta) {
+    matrix_name <- paste0("matrix_", a, "_alpha_", b, "_beta")
+    dissimilarity_matrix <- matrix_list[[matrix_name]]
+    mds_result <- cmdscale(dissimilarity_matrix, k = 2)
+    mds_list[[matrix_name]] <- mds_result
+  }
+}
+
+
+# ==== Generate All PLOTS ====
+
+plot_list <- list()
+for (a in alpha) {
+  for (b in beta) {
+    matrix_name <- paste0("matrix_", a, "_alpha_", b, "_beta")
+    mds_name <- paste0("mds_", a, "_alpha_", b, "_beta")
+
+    dissimilarity_matrix <- matrix_list[[matrix_name]]
+    mds_result <- mds_list[[matrix_name]]
+
+    # Créer le graphique MDS
+    plot <- ggplot(as.data.frame(mds_result), aes(x = V1, y = V2, label = rownames(dissimilarity_matrix))) +
+      geom_point(color = "blue", size = 3) +
+      geom_text(hjust = 0.5, vjust = -0.5) +
+      labs(x = "Dimension 1", y = "Dimension 2", title = paste0("MDS - ", a, " alpha, ", b, " beta"))
+
+    plot_list[[paste0("plot_", a, "_alpha_", b, "_beta")]] <- plot
+  }
+}
+# Convertir la liste de graphiques en une liste de grobs
+grobs <- lapply(plot_list, ggplotGrob)
+
+# ==== GRIDs ====
+grid.arrange(grobs$plot_0.5_alpha_0.5_beta,grobs$plot_0.6_alpha_0.7_beta,grobs$plot_0.8_alpha_0.9_beta,grobs$plot_1_alpha_1_beta,ncol=2,nrow=2)
+
+
 
 # ==== Construire les couples alpha/beta pour analyse ====
 couples <- expand.grid(alpha = alpha, beta = beta)
@@ -68,7 +110,7 @@ p <- ggplotly(p)
 print(p)
 
 
-
+View(evolution_matrix)
 
 
 

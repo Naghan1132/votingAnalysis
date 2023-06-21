@@ -2,7 +2,7 @@ library(ggplot2)
 library(plotly)
 library(gridExtra)
 
-# ==== LOADING DATA FROM votingExperiments::all_cases() ====
+# ==== LOADING DATA FROM votingExperiments::nc_nv_evolving() ====
 
 num_candidates <- c(3, 4, 5, 7, 9, 14)
 num_voters <- c(9, 15, 21, 51, 101, 1001)
@@ -12,13 +12,19 @@ for (num_c in num_candidates) {
   for (num_v in num_voters) {
     # Loading files
     #file_path <- paste0("experiments_output_data/nc_nv_evolving/beta/", num_v, "_voters_", num_c, "_candidates_1000_simus.RData")
-    file_path <- paste0("experiments_output_data/nc_nv_evolving/unif/", num_v, "_voters_", num_c, "_candidates_100_simus.RData")
+    file_path <- paste0("experiments_output_data/nc_nv_evolving/unif/", num_v, "_voters_", num_c, "_candidates_1000_simus.RData")
     #file_path <- paste0("experiments_output_data/nc_nv_evolving/norm/", num_v, "_voters_", num_c, "_candidates_1000_simus.RData")
     load(file_path)
     matrix_name <- paste0("matrix_", num_v, "_voters_", num_c, "_candidates")
+
+    #elimine <- list("anti_plularity","infinity")
+    #indices <- which(colnames(dissimilarity_matrix) %in% elimine)
+    #dissimilarity_matrix <- dissimilarity_matrix[-indices,-indices]
+
     matrix_list[[matrix_name]] <- dissimilarity_matrix
   }
 }
+
 for (num_v in num_voters) {
   for (num_c in num_candidates) {
     # Construire le nom de la variable avec un nom dynamique
@@ -57,12 +63,13 @@ for (num_v in num_voters) {
     plot <- ggplot(as.data.frame(mds_result), aes(x = V1, y = V2, label = rownames(dissimilarity_matrix))) +
       geom_point(color = "blue", size = 3) +
       geom_text(hjust = 0.5, vjust = -0.5) +
+      xlim(-400, 400) +
+      ylim(-400, 400) +
       labs(x = "Dimension 1", y = "Dimension 2", title = paste0("MDS - ", num_v, " voters, ", num_c, " candidates"))
 
     plot_list[[paste0("plot_", num_v, "_voters_", num_c, "_candidates")]] <- plot
   }
 }
-
 
 # Convertir la liste de graphiques en une liste de grobs
 grobs <- lapply(plot_list, ggplotGrob)
@@ -80,11 +87,17 @@ grid.arrange(grobs$plot_9_voters_14_candidates,grobs$plot_51_voters_14_candidate
 # Afficher les graphiques côte à côte
 grid.arrange(grobs = grobs, ncol = length(num_candidates), nrow = length(num_voters))
 
+# Sauvegarde des grobs
+for (i in seq_along(grobs)) {
+  name <- names(as.list(plot_list))[i]
+  ggsave(paste0("plot_img_without_somes_methods/plot_",name,".png"), plot = grobs[[i]], width = 8, height = 8, dpi = 300)
+}
 
 # ==== Distance Analysis by voters and candidates ====
 
-voters <- c(9,15,21,51,101)
-candidates <- c(14)
+# TRÈS intéressant !
+voters <- c(15,101)
+candidates <- c(3,4,5)
 couples <- expand.grid(voters = voters, candidates = candidates)
 chaine_couples <- paste(couples$voters, couples$candidates, sep = "_")
 
